@@ -7,4 +7,6 @@ app.get('/', (req, res) => {
   res.send({ hi: 'there' });
 });
 
-app.listen(5000);
+// Dynamic port binding.
+const PORT = process.env.port || 5000;
+app.listen(PORT);
