@@ -12,4 +12,9 @@ module.exports = (app) => {
 
   // Handle the return authentication code.
   app.get('/auth/google/callback', passport.authenticate('google'));
+
+  // Test user authentication.
+  app.get('/api/current_user', (req, res) => {
+    res.send(req.user);
+  });
 };

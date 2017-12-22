@@ -2,6 +2,8 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
+const cookieSession = require('cookie-session');
+const passport = require('passport');
 const keys = require('./config/keys');
 require('./models/User');
 // This will execute the code inside the file, regardless of lack of module.exports
@@ -10,6 +12,18 @@ require('./services/passport');
 mongoose.connect(keys.mongoURI);
 
 const app = express();
+
+// Tell express to use session cookies.
+app.use(
+  cookieSession({
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+    keys: [keys.cookieKey] // Cookie encryption
+  })
+);
+
+// Tell passport to use cookies for authentication.
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Neat trick!
 require('./routes/authRoutes')(app);
