@@ -47,25 +47,44 @@ passport.use(
       callbackURL: '/auth/google/callback',
       proxy: true
     },
-    (accessToken, refreshToken, profile, done) => {
+    // Using PROMISES
+    // (accessToken, refreshToken, profile, done) => {
+    //   // We only really need to store and use the access and refresh tokens when we
+    //   // have asked permission to modify things on the user's google account.
+    //   // In this case we're just dealing with simple auth and the user's email and profile
+    //   // so don't need these.
+    //
+    //   User.findOne({ googleId: profile.id })
+    //     .then((existingUser) => {
+    //       if (existingUser) {
+    //         // Let passport know we're finished and it should continue the authentication process.
+    //         done(null, existingUser);
+    //       }
+    //       else {
+    //         // Save a new user.
+    //         new User({ googleId: profile.id })
+    //           .save()
+    //           .then(user => done(null, user));
+    //       }
+    //     });
+    // }
+    // USING Async/Await
+    async (accessToken, refreshToken, profile, done) => {
       // We only really need to store and use the access and refresh tokens when we
       // have asked permission to modify things on the user's google account.
       // In this case we're just dealing with simple auth and the user's email and profile
       // so don't need these.
 
-      User.findOne({ googleId: profile.id })
-        .then((existingUser) => {
-          if (existingUser) {
-            // Let passport know we're finished and it should continue the authentication process.
-            done(null, existingUser);
-          }
-          else {
-            // Save a new user.
-            new User({ googleId: profile.id })
-              .save()
-              .then(user => done(null, user));
-          }
-        });
+      const existingUser = await User.findOne({ googleId: profile.id });
+
+      if (existingUser) {
+        // Let passport know we're finished and it should continue the authentication process.
+        return done(null, existingUser);
+      }
+
+      // Save a new user.
+      const user = await new User({ googleId: profile.id }).save();
+      done(null, user);
     }
   )
 );
