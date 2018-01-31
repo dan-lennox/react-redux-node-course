@@ -11,12 +11,21 @@ module.exports = (app) => {
   );
 
   // Handle the return authentication code.
-  app.get('/auth/google/callback', passport.authenticate('google'));
+  app.get(
+    '/auth/google/callback',
+    // Middleware (could be any function).
+    passport.authenticate('google'),
+    // Route handler.
+    (req, res) => {
+      // Redirect after succesfull login.
+      res.redirect('/surveys');
+    }
+  );
 
   // Handle logout request.
   app.get('/api/user/logout', (req, res) => {
     req.logout();
-    res.send(req.user);
+    res.redirect('/');
   });
 
 

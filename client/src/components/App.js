@@ -1,24 +1,38 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { BrowserRouter, Route } from 'react-router-dom';
+import { connect } from 'react-redux';
+import * as actions from '../actions';
 
-const Header = () => <h2>Header</h2>;
+import Header from './Header';
+
 const Dashboard = () => <h2>Dashboard</h2>;
 const SurveyNew = () => <h2>SurveyNew</h2>;
 const Landing = () => <h2>Landing</h2>;
 
-const App = () => {
-  return (
-    <div>
-      <BrowserRouter>
-        <div>
-          <Header />
-          <Route exact path="/" component={Landing} />
-          <Route exact path="/surveys" component={Dashboard} />
-          <Route path="/surveys/new" component={SurveyNew} />
-        </div>
-      </BrowserRouter>
-    </div>
-  );
+class App extends Component {
+
+  // React lifecycle method.
+  componentDidMount() {
+
+    // Call the FETCH_USER actions creator.
+    this.props.fetchUser();
+  }
+
+  render() {
+    return (
+      <div className="container">
+        <BrowserRouter>
+          <div>
+            <Header/>
+            <Route exact path="/" component={Landing}/>
+            <Route exact path="/surveys" component={Dashboard}/>
+            <Route path="/surveys/new" component={SurveyNew}/>
+          </div>
+        </BrowserRouter>
+      </div>
+    );
+  }
 };
 
-export default App;
+// Note: This will assign all of our action creators as 'props' on the App component.
+export default connect(null, actions)(App);
