@@ -3,10 +3,19 @@ import axios from 'axios';
 import { FETCH_USER } from './types';
 
 export const fetchUser = () => async dispatch => {
-    const res = await axios.get('/api/current_user')
+  const res = await axios.get('/api/current_user');
 
-    dispatch({ type: FETCH_USER, payload: res.data });
-  };
+  dispatch({ type: FETCH_USER, payload: res.data });
+};
+
+export const handleStripeToken = (token) => async dispatch => {
+  const res = await axios.post('/api/stripe', token);
+
+  // res.data should be an updated user model. So we update the data store
+  // in the same way as the initial user authorisation 'fetchUser' action creator.
+  // So this is a different 'Action creator' that uses the SAME 'action' (FETCH_USER).
+  dispatch({ type: FETCH_USER, payload: res.data});
+};
 
 // Our Redux thunk middleware will catch the fact that we're returning a function
 // rather than a regular redux action object.
