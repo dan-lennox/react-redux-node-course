@@ -8,6 +8,7 @@ const passport = require('passport');
 const bodyParser = require('body-parser');
 const keys = require('./config/keys');
 require('./models/User');
+require('./models/Survey');
 // This will execute the code inside the file, regardless of lack of module.exports
 require('./services/passport');
 
