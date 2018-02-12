@@ -35,6 +35,7 @@ app.use(passport.session());
 // Neat trick!
 require('./routes/authRoutes')(app);
 require('./routes/billingRoutes')(app);
+require('./routes/surveyRoutes')(app);
 
 // Locally, we have create-react-app running a front end server. So we have both a
 // front and back end server and is just so we have a convieniant dev environment (auto rebuilding etc)
