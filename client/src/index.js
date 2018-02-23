@@ -12,6 +12,13 @@ import reduxThunk from 'redux-thunk';
 import App from './components/App';
 import reducers from './reducers';
 
+// Temp code for testing backend routes.
+// To test:
+// Uncomment this line.
+// Then use axios directly in the js console. Eg, axios.post('...
+//import axios from 'axios';
+//window.axios = axios;
+
 // ReduxThunk allows us to have asynchronous actions.
 const store = createStore(reducers, {}, applyMiddleware(reduxThunk));
 

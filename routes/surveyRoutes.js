@@ -3,13 +3,21 @@ const requireLogin = require('../middleware/requireLogin');
 const requireCredits = require('../middleware/requireCredits');
 const Mailer = require('../services/Mailer');
 const surveyTemplate = require('../services/emailTemplates/surveyTemplate');
+const axios = require('axios');
 
 // We do this instead of directly doing - const survey = require('../models/survey');
 // in order to ensure compatibility with various testing frameworks.
 const Survey = mongoose.model('surveys');
 
-module.exports = app => {
-  app.post('/api/surveys', requireLogin, requireCredits, (req, res) => {
+module.exports = (app) => {
+
+  app.get('/api/surveys/thanks', (req, res) => {
+    res.send('Thanks for voting!');
+  });
+
+  app.post('/api/surveys', requireLogin, requireCredits, async (req, res) => {
+
+    console.log('called the endpoint!!! ==============================');
 
     // How awesome is object destructuring...
     const { title, subject, body, recipients } = req.body;
@@ -25,6 +33,22 @@ module.exports = app => {
       dateSent: Date.now()
     });
 
-    const mailer = new Mailer(survey, surveyTemplate(survey));
+    try {
+
+      const mailer = new Mailer(survey, surveyTemplate(survey));
+      //mailer.send().catch(error => console.log(error));
+
+      await mailer.send();
+
+      await survey.save();
+
+      req.user.credits -= 1;
+      const user = await req.user.save();
+
+      res.send(user);
+    }
+    catch (err) {
+      res.status(422).send(err);
+    }
   });
 };
