@@ -16,8 +16,8 @@ import reducers from './reducers';
 // To test:
 // Uncomment this line.
 // Then use axios directly in the js console. Eg, axios.post('...
-//import axios from 'axios';
-//window.axios = axios;
+import axios from 'axios';
+window.axios = axios;
 
 // ReduxThunk allows us to have asynchronous actions.
 const store = createStore(reducers, {}, applyMiddleware(reduxThunk));
