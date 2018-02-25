@@ -48,6 +48,7 @@ module.exports = (app) => {
       res.send(user);
     }
     catch (err) {
+      console.log(err);
       res.status(422).send(err);
     }
   });

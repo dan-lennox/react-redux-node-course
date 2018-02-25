@@ -8,12 +8,19 @@ export const fetchUser = () => async dispatch => {
   dispatch({ type: FETCH_USER, payload: res.data });
 };
 
-export const handleStripeToken = (token) => async dispatch => {
+export const handleStripeToken = token => async dispatch => {
   const res = await axios.post('/api/stripe', token);
 
   // res.data should be an updated user model. So we update the data store
   // in the same way as the initial user authorisation 'fetchUser' action creator.
   // So this is a different 'Action creator' that uses the SAME 'action' (FETCH_USER).
+  dispatch({ type: FETCH_USER, payload: res.data});
+};
+
+export const submitSurvey = values => async dispatch => {
+  const res = await axios.post('/api/surveys', values);
+
+  // update user model, since we will have now spent a credit.
   dispatch({ type: FETCH_USER, payload: res.data});
 };
 
