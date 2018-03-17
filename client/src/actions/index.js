@@ -17,9 +17,11 @@ export const handleStripeToken = token => async dispatch => {
   dispatch({ type: FETCH_USER, payload: res.data});
 };
 
-export const submitSurvey = values => async dispatch => {
+export const submitSurvey = (values, history) => async dispatch => {
   const res = await axios.post('/api/surveys', values);
 
+  // Redirect to the surveys page.
+  history.push('/surveys');
   // update user model, since we will have now spent a credit.
   dispatch({ type: FETCH_USER, payload: res.data});
 };
