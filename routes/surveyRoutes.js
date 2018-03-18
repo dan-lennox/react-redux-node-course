@@ -1,3 +1,6 @@
+const _ = require('lodash');
+const Path = require('path-parser');
+const { URL } = require('url');
 const mongoose = require('mongoose');
 const requireLogin = require('../middleware/requireLogin');
 const requireCredits = require('../middleware/requireCredits');
@@ -16,7 +19,24 @@ module.exports = (app) => {
   });
 
   app.post('/api/surveys/webhooks', (req, res) => {
-    console.log(req.body);
+
+    const parser = new Path('/api/surveys/:surveyId/:choice');
+
+    const events = _.chain(req.body)
+      .map(({ email, url}) => {
+        const match = parser.test(new URL(url).pathname);
+        if (match) {
+          return { email, surveyId: match.surveyId, choice: match.choice};
+        }
+      })
+      // _.compact removes undefined elements.
+      .compact()
+      // Remeve any duplicates that have the same email and surveyId.
+      .uniqBy('email', 'surveyId')
+      .value();
+
+
+    // Let sendgrid know the webhook request was successful.
     res.send({});
   });
 
