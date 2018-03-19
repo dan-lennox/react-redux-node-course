@@ -14,7 +14,7 @@ const Survey = mongoose.model('surveys');
 
 module.exports = (app) => {
 
-  app.get('/api/surveys/thanks', (req, res) => {
+  app.get('/api/surveys/:surveyId/:choice', (req, res) => {
     res.send('Thanks for voting!');
   });
 
@@ -22,7 +22,7 @@ module.exports = (app) => {
 
     const parser = new Path('/api/surveys/:surveyId/:choice');
 
-    const events = _.chain(req.body)
+    _.chain(req.body)
       .map(({ email, url}) => {
         const match = parser.test(new URL(url).pathname);
         if (match) {
@@ -33,8 +33,22 @@ module.exports = (app) => {
       .compact()
       // Remeve any duplicates that have the same email and surveyId.
       .uniqBy('email', 'surveyId')
-      .value();
+      .each(({ surveyid, email, choice}) => {
 
+        Survey.updateOne({
+          _id: surveyId,
+          recipients: {
+            $elemMatch: { email: email, responded: false }
+          }
+        }, {
+          // $inc is "increment" (this property yes/no property). Alternative to $set that does $set and increment.
+          // [choice] is es6 "key interpolation". Can't use choice variable directly at runtime.
+          $inc: { [choice]: 1 },
+          $set: { 'recipients.$.responded': true }, // We use $set when we need to substitute with $
+          lastResponded: new Date() // Otherwise we can just set like this.
+        }).exec();
+      })
+      .value();
 
     // Let sendgrid know the webhook request was successful.
     res.send({});
